@@ -2,6 +2,7 @@
   import link from '../assets/links-fill.svg'
   import trashBin from '../assets/delete-bin-line.svg'
   import add from '../assets/heart-add-line.svg'
+  import setting from '../assets/settings.svg'
   import './collection.css'
   import localforage from 'localforage'
   import { onMount } from 'svelte'
@@ -68,8 +69,25 @@
 </script>
 
 <main class="flex flex-col px-8 pt-5">
-  <div class="text-[#677480] text-[20px]">
-    已标记<span class="text-[#83D9F4] mx-1">{collectedWords.length}</span>个单词
+  <div class=" flex justify-between items-center">
+    <div class="text-[#677480] text-[20px]">
+      已标记<span class="text-[#83D9F4] mx-1">{collectedWords.length}</span>个单词
+    </div>
+    <div class=" flex items-center">
+      <!-- <button
+        on:click={jumpToURL('https://www.jedxie.work/')}
+        class="self-stretch flex items-stretch"
+      >
+        <div
+          class=" px-3 bg-[#83D9F4] text-white font-medium mr-5 flex justify-center items-center rounded-md"
+        >
+          Buy me a coffee ☕️
+        </div>
+      </button> -->
+      <a href="/options.html" target="_blank">
+        <img src={setting} alt="settings" class=" w-7 h-7" />
+      </a>
+    </div>
   </div>
   <div class=" flex flex-col items-stretch divide-y divide-dashed divide-[#C5F1FF] mt-1">
     {#if wordsInPages.length > 0}

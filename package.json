@@ -1,8 +1,8 @@
 {
-  "name": "transider",
-  "version": "1.0.0",
+  "name": "Transider——随手记单词",
+  "version": "1.0.1",
   "author": "jedxie",
-  "description": "运行在浏览器侧边栏中的英语单词翻译工具",
+  "description": "在阅读的同时随手记单词",
   "type": "module",
   "license": "MIT",
   "keywords": [

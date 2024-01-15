@@ -5,6 +5,9 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 });
 
+//enble contentScript.js to access the storage
+chrome.storage.session.setAccessLevel({ accessLevel: "TRUSTED_AND_UNTRUSTED_CONTEXTS" });
+
 //click the action icon to open the side panel.
 chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
 

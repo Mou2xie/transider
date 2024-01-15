@@ -24,7 +24,7 @@
   }
 </script>
 
-<div class=" flex items-center">
+<div class=" flex items-center select-none">
   <button on:click={reset}><img src={skip_left} alt="skip_left" /></button>
   <button on:click={previous}><img src={arrow_left} alt="arrow_left" /></button>
 

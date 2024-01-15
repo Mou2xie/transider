@@ -8,6 +8,7 @@
   import heart_fill from '../assets/heart-fill.svg'
   import loudspeaker from '../assets/volume-up-fill.svg'
   import book from '../assets/book-mark-line.svg'
+  import settings from '../assets/settings.svg'
 
   let selectedWordInfo = undefined
   let translation = null
@@ -15,6 +16,7 @@
   let isCollected = false
   let totalCollectionNum = 0
   let callFrom = 1
+  let pauseExtension = false
 
   const getTranslation = (selectedWordInfo) => {
     if (selectedWordInfo) {
@@ -77,17 +79,88 @@
     })
   }
 
+  const autoSave = (node, _translation) => {
+    chrome.storage.session.get('autoCollect').then((res) => {
+      if (res?.autoCollect) {
+        if (translation && translation != 'no result') {
+          localforage.getItem(translation.word).then((res) => {
+            if (!res) {
+              node.click()
+              console.log(`autoSave`)
+            }
+          })
+        }
+      }
+    })
+    return {
+      update() {
+        chrome.storage.session.get('autoCollect').then((res) => {
+          if (res?.autoCollect) {
+            if (translation && translation != 'no result') {
+              localforage.getItem(translation.word).then((res) => {
+                if (!res) {
+                  node.click()
+                }
+              })
+            }
+          }
+        })
+      },
+    }
+  }
+
+  const autoPlay = (node, _audioSrc) => {
+    chrome.storage.session.get('silentTranslate').then((res) => {
+      if (!res?.silentTranslate) {
+        node.play()
+      }
+    })
+    return {
+      update() {
+        chrome.storage.session.get('silentTranslate').then((res) => {
+          if (!res?.silentTranslate) {
+            node.play()
+          }
+        })
+      },
+    }
+  }
+
+  const pauseExtensionClick = () => {
+    pauseExtension
+      ? chrome.storage.session.set({ pauseExtension: false })
+      : chrome.storage.session.set({ pauseExtension: true })
+  }
+
   onMount(() => {
     //get the selectedTextInfo as soon as the side panel has been opened.(initially)
-    chrome.storage.session.get(['selectedTextInfo']).then(({ selectedTextInfo }) => {
-      selectedWordInfo = selectedTextInfo
-      callFrom = selectedTextInfo.from
+    chrome.storage.session.get(['selectedTextInfo']).then((res) => {
+      if (res?.selectedTextInfo) {
+        selectedWordInfo = res?.selectedTextInfo
+        callFrom = res?.selectedTextInfo.from
+      }
     })
 
     //get the new selectedTextInfo value when the selectedTextInfo has been changed.
-    chrome.storage.onChanged.addListener(({ selectedTextInfo: { newValue } }) => {
-      selectedWordInfo = newValue
-      callFrom = newValue.from
+    chrome.storage.onChanged.addListener((res) => {
+      if (res?.selectedTextInfo) {
+        selectedWordInfo = res?.selectedTextInfo?.newValue
+        callFrom = res?.selectedTextInfo?.newValue.from
+      }
+    })
+
+    //get pauseExtension setting initially.
+    chrome.storage.session.get('pauseExtension').then((res) => {
+      if (res?.pauseExtension) {
+        pauseExtension = res?.pauseExtension
+      }
+    })
+
+    //monitor pauseExtension changes.
+    chrome.storage.onChanged.addListener((res) => {
+      if (res?.pauseExtension) {
+        pauseExtension = res?.pauseExtension?.newValue
+      }
     })
 
     getTotalCollectionNum()
@@ -111,7 +184,10 @@
         <div class=" flex justify-between items-center">
           <div class="text-[30px] text-[#3B4349] font-[600]">{translation.word}</div>
           {#if callFrom === 1}
-            <button on:click={isCollected ? removeCollectedWord : collectWord}>
+            <button
+              on:click={isCollected ? removeCollectedWord : collectWord}
+              use:autoSave={translation}
+            >
               <img
                 class=" w-7 h-7"
                 src={isCollected ? heart_fill : heart_line}
@@ -126,13 +202,12 @@
           {/if}
           <button
             on:click={() => {
-              let player = document.getElementById('audioPlayer')
-              player.play()
+              document.getElementById('audioPlayer').play()
             }}
           >
             <img class=" w-6 h-6 ml-2" src={loudspeaker} alt="read aloud" />
           </button>
-          <audio autoplay id="audioPlayer" src={audioSrc} />
+          <audio id="audioPlayer" src={audioSrc} use:autoPlay={audioSrc} />
         </div>
       </div>
 
@@ -174,16 +249,37 @@
 
   <!-- collection entrance -->
   {#if callFrom === 1}
-    <button on:click={openCollection}>
-      <div
-        class=" fixed bottom-3 left-3 right-3 h-10 rounded-lg flex justify-between items-center px-2 bg-[#83D9F4] hover:bg-[#65CDEE]"
-      >
-        <div class="flex items-center">
-          <img class=" w-5 h-5 mr-2" src={book} alt="collection" />
-          <div class=" text-white text-[16px]">单词本</div>
+    <div class=" fixed bottom-3 left-3 right-3 flex flex-col items-stretch">
+      <button on:click={openCollection}>
+        <div
+          class=" h-10 rounded-lg flex justify-between items-center px-2 bg-[#83D9F4] hover:bg-[#65CDEE]"
+        >
+          <div class="flex items-center">
+            <img class=" w-5 h-5 mr-2" src={book} alt="collection" />
+            <div class=" text-white text-[16px]">单词本</div>
+          </div>
+          <div class=" text-white text-[14px]">{totalCollectionNum}</div>
         </div>
-        <div class=" text-white text-[14px]">{totalCollectionNum}</div>
+      </button>
+      <div class="flex justify-between items-center mt-3">
+        <div class="flex text-[14px] items-center ml-2">
+          <button class="flex items-center" on:click={pauseExtensionClick}>
+            {#if pauseExtension}
+              <div
+                class=" w-4 h-4 rounded-full flex justify-center items-center border border-[#83D9F4]"
+              >
+                <div class=" w-3 h-3 rounded-full bg-[#83D9F4]"></div>
+              </div>
+            {:else}
+              <div class=" w-4 h-4 rounded-full border border-[#B3C0CC]"></div>
+            {/if}
+            <div class=" text-[#B3C0CC] ml-1">停用侧边栏</div>
+          </button>
+        </div>
+        <a href="/options.html" target="_blank">
+          <img src={settings} alt="settings" class=" w-6 h-6" />
+        </a>
       </div>
-    </button>
+    </div>
   {/if}
 </main>

@@ -1,19 +1,25 @@
 document.addEventListener('dblclick', (e) => {
 
-  let selectedText = window.getSelection().toString().trim().toLowerCase();
+  chrome.storage.session.get('pauseExtension').then((res) => {
 
-  if (isEnglishString(selectedText)) {
-    let { target: { textContent } } = e;
-    let sentence = findRelatedSentence(selectedText, textContent.split('.'));
-    let currentURL = window.location.href;
+    // check if the extension is active
+    if (!res?.pauseExtension) {
+      let selectedText = window.getSelection().toString().trim().toLowerCase();
 
-    chrome.runtime.sendMessage({
-      selectedText,
-      sentence,
-      currentURL,
-      from:1 // open sidepanel from websites
-    });
-  }
+      if (isEnglishString(selectedText)) {
+        let { target: { textContent } } = e;
+        let sentence = findRelatedSentence(selectedText, textContent.split('.'));
+        let currentURL = window.location.href;
+
+        chrome.runtime.sendMessage({
+          selectedText,
+          sentence,
+          currentURL,
+          from: 1 // open sidepanel from websites
+        });
+      }
+    }
+  })
 });
 
 //find which sentence the selected word is in.

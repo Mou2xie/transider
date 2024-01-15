@@ -19,6 +19,7 @@ export default defineManifest({
     service_worker: 'src/background/index.js',
     type: 'module',
   },
+  options_page: 'options.html',
   content_scripts: [
     {
       matches: ['http://*/*', 'https://*/*'],
