@@ -74,18 +74,18 @@
       已标记<span class="text-[#83D9F4] mx-1">{collectedWords.length}</span>个单词
     </div>
     <div class=" flex items-center">
-      <!-- <button
-        on:click={jumpToURL('https://www.jedxie.work/')}
+      <button
+        on:click={jumpToURL('https://www.jedxie.work/donate')}
         class="self-stretch flex items-stretch"
       >
         <div
-          class=" px-3 bg-[#83D9F4] text-white font-medium mr-5 flex justify-center items-center rounded-md"
+          class=" px-3 py-1 bg-[#83D9F4] text-white font-medium mr-5 flex justify-center items-center rounded-md"
         >
           Buy me a coffee ☕️
         </div>
-      </button> -->
+      </button>
       <a href="/options.html" target="_blank">
-        <img src={setting} alt="settings" class=" w-7 h-7" />
+        <img src={setting} alt="settings" class=" w-6 h-6" />
       </a>
     </div>
   </div>

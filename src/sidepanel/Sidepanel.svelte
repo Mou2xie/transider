@@ -21,12 +21,13 @@
   const getTranslation = (selectedWordInfo) => {
     if (selectedWordInfo) {
       supabse
-        .from('dictionary')
+        .from('dictionary_n')
         .select()
         .eq('word', selectedWordInfo.selectedText)
         .then((res) => {
           if (res.data.length > 0) {
             translation = translationHandler(res.data[0])
+            console.log(translation)
           } else {
             translation = 'no result'
           }
@@ -221,6 +222,19 @@
           </div>
         {/each}
       </div>
+
+      {#if translation.definition}
+        <div class=" flex flex-col items-stretch mt-2">
+          {#each translation.definition as item}
+            <div class="flex items-start text-[16px] first:mt-2">
+              {#if item[0]}
+                <div class=" text-[#83D9F4] mr-2">{`${item[0]}.`}</div>
+              {/if}
+              <div class="text-[#677480]">{`${item[1]}.`}</div>
+            </div>
+          {/each}
+        </div>
+      {/if}
 
       {#if translation.exchange}
         <div class=" flex flex-col items-stretch mt-2">

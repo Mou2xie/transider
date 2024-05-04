@@ -142,12 +142,10 @@
         </div>
       </div>
     </div>
-    <div class="flex items-center text-[16px] text-[#B3C0CC] italic">
-      <div>{`更多好用产品 > 欢迎逛逛开发者的赛博地摊`}</div>
-      <a class="flex items-center" href="https://www.jedxie.work/" target="_blank">
-        <div class="text-[#83D9F4] font-semibold ml-2">www.jedxie.work</div>
-        <img src={link} alt="link" class=" scale-75" />
-      </a>
+    <div class=" flex flex-col text-[16px] text-[#B3C0CC] gap-2">
+      <div class="">{`我的更多产品 >`}</div>
+      <a class="italic text-[#83D9F4]" href="https://www.speakingpass.com/" target="_blank">⭐️ SpeakingPass-打造你的专属雅思口语语料库</a>
+      <a class="italic text-[#83D9F4]" href="https://www.jedxie.work/" target="_blank">⭐️ 个人主页</a>
     </div>
   </div>
 </main>
